@@ -9,9 +9,10 @@ import {
   Keyboard,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
+import { Alert } from "@/components/toast/toast";
 
 export default function HomeScreen() {
-  const [red, setRed] = useState<number>(73);
+  const [red, setRed] = useState<number>(255);
   const [green, setGreen] = useState<number>(255);
   const [blue, setBlue] = useState<number>(255);
 
@@ -20,6 +21,11 @@ export default function HomeScreen() {
     .toString(16)
     .slice(1)
     .toUpperCase()}`;
+
+  const textColor =
+    [red, green, blue].filter((color) => color < 100).length >= 2
+      ? "#FFF"
+      : "#000";
 
   const handleRedChange = (newText: string) => {
     const parsedValue = parseInt(newText, 10);
@@ -35,14 +41,15 @@ export default function HomeScreen() {
   };
 
   const copyToClipboard = async (text: string) => {
-    await Clipboard.setStringAsync("hello world");
+    await Clipboard.setStringAsync(text);
+    Alert("Cor copiada!", 1000);
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={[styles.container, { backgroundColor }]}>
         <Text
-          style={styles.colorCode}
+          style={[styles.colorCode, { color: textColor }]}
           onLongPress={() => copyToClipboard(hexColor)}
         >
           {hexColor}
@@ -51,9 +58,9 @@ export default function HomeScreen() {
         <View style={styles.allSlidersContainer}>
           <View style={styles.sliderContainer}>
             <View style={styles.sliderContainerHeader}>
-              <Text>R:</Text>
+              <Text style={{ color: textColor }}>R:</Text>
               <TextInput
-                style={{ height: 40 }}
+                style={{ height: 40, color: textColor }}
                 keyboardType="numeric"
                 onChangeText={handleRedChange}
                 defaultValue={red.toString()}
@@ -72,9 +79,9 @@ export default function HomeScreen() {
 
           <View style={styles.sliderContainer}>
             <View style={styles.sliderContainerHeader}>
-              <Text>G:</Text>
+              <Text style={{ color: textColor }}>G:</Text>
               <TextInput
-                style={{ height: 40 }}
+                style={{ height: 40, color: textColor }}
                 keyboardType="numeric"
                 onChangeText={handleGreenChange}
                 defaultValue={green.toString()}
@@ -93,9 +100,9 @@ export default function HomeScreen() {
 
           <View style={styles.sliderContainer}>
             <View style={styles.sliderContainerHeader}>
-              <Text>B:</Text>
+              <Text style={{ color: textColor }}>B:</Text>
               <TextInput
-                style={{ height: 40 }}
+                style={{ height: 40, color: textColor }}
                 keyboardType="numeric"
                 onChangeText={handleBlueChange}
                 defaultValue={blue.toString()}
@@ -126,17 +133,11 @@ const styles = StyleSheet.create({
   colorCode: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#000",
     marginBottom: 20,
   },
   allSlidersContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    alignItems: "center",
-  },
-  slidersContainer: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
     alignItems: "center",
   },
   sliderContainerHeader: {
@@ -152,10 +153,5 @@ const styles = StyleSheet.create({
     height: 40,
     marginTop: 90,
     transform: [{ rotate: "-90deg" }],
-  },
-  sliderLabel: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });
